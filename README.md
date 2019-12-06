@@ -9,7 +9,6 @@ pixel in an X11 environment.
 
     zef install App::pixel-pick
 
-
 Needs to have the `import` utility available. Installed part of the `MagickWand`
 package. Most Linuxes have it already, if not, install ` libmagickwand`. May
 want to install `libmagickwand-dev` as well, though it isn't strictly necessary
@@ -26,7 +25,7 @@ the pixel under the mouse pointer and show the RGB values in both decimal and
 hexadecimal. Will display a small block colored to that value. Updates
 (moderately) slowly as the mouse is moved. There is some delay just to slow down
 the "busy" loop of checking to see if the mouse has moved. Will not attempt to
-update if the mouse has not moved. Uses the X11::xdo module to capture mouse
+update if the mouse has not moved. Uses the `X11::xdo` module to capture mouse
 motion so will only work in an X11 environment.
 
 Note that screen sub-pixel dithering may lead to some unexpected values being
@@ -57,7 +56,7 @@ colons. EG. `RRR:GGG:BBB`
 
 
 If you would prefer to receive hex values, use an 'h' as the quiet parameter.
-Returns the RGB values in hexadecimal, separated by colons; RR:GG:BB.
+Returns the RGB values in hexadecimal, separated by colons; `RR:GG:BB`.
 
     pixel-pick 100 200 h
 

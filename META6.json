@@ -1,7 +1,7 @@
 {
     "perl"          : "6.c",
     "name"          : "App::pixel-pick",
-    "version"       : "0.3",
+    "version"       : "0.4",
     "auth"          : "github:thundergnat",
     "authors"       : ["Steve Schulze"],
     "license"       : "Artistic-2.0",
