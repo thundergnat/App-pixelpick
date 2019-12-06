@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 
-my $version = v0.3;
+my $version = v0.4;
 
 # Control-C exit
 signal(SIGINT).tap: { sleep .3; cleanup(); print "\n" xx 50, "\e[H\e[J"; exit(0) }
@@ -53,7 +53,7 @@ multi MAIN (
 sub get-pixel {
 
     # import is installed as part of MagickWand. Most Linuxes
-    # already has it. If not, need to install libmagickwand
+    # already have it. If not, need to install libmagickwand
 
     my $xcolor =
       qqx/import -window root -crop 1x1+{$x-1 max 0}+{$y-2 max 0} -depth 8 txt:-/
