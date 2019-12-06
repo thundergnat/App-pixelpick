@@ -1,8 +1,6 @@
 #!/usr/bin/env perl6
 
-my $version = v0.2;
-
-use File::Temp;
+my $version = v0.3;
 
 # Control-C exit
 signal(SIGINT).tap: { sleep .3; cleanup(); print "\n" xx 50, "\e[H\e[J"; exit(0) }
@@ -14,9 +12,6 @@ my ($x, $y);
 my ($lx, $ly) = 0, 0;
 my $indent = '    ';
 my ($red, $green, $blue);
-
-# tempfile automatically destroyed on exit
-my ($tempfile) = tempfile( :suffix(".png") );
 
 multi MAIN () {
     use X11::libxdo;
@@ -31,7 +26,7 @@ multi MAIN () {
     }
     $xdo = ();
 }
-
+$green //= $red;
 my %*SUB-MAIN-OPTS = :named-anywhere;
 
 multi MAIN (
@@ -57,20 +52,16 @@ multi MAIN (
 
 sub get-pixel {
 
-    # import and convert are installed as part of MagickWand. Most Linuxes
-    # already have them. If not, need to install libmagickwand
-
-    qqx/import -window root -crop 1x1+{$x-1 max 0}+{$y-2 max 0} $tempfile/;
-
-    sleep .01; # ensure previous file operation has time to complete
-
-    ($red,$green,$blue) = Any, Any, Any;
-
     my $fmt = '%[pixel:p{0,0}]'; #formatting string to retreive pixel info
 
-    my $color = qqx/convert $tempfile -format '$fmt' info:-/;
+    # import is installed as part of MagickWand. Most Linuxes
+    # already has it. If not, need to install libmagickwand
 
+    my $color = qqx/import -window root -crop 1x1+{$x-1 max 0}+{$y-2 max 0} -format '$fmt' info:-/;
+
+    ($red, $green, $blue) = Any, Any, Any;
     ($red, $green, $blue) = $color.comb(/\d+/);
+    $red   //= 0;
     $green //= $red;
     $blue  //= $red
 }
