@@ -7,7 +7,7 @@ pixel in an X11 environment.
 
 ### Install
 
-    zef install perl6-App::pixel-pick
+    zef install App::pixel-pick
 
 
 Needs to have the `import` and `convert` utilities available. Those are part of
