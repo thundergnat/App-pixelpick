@@ -1,6 +1,6 @@
 {
     "perl"          : "6.c",
-    "name"          : "perl6-App::pixel-pick",
+    "name"          : "App::pixel-pick",
     "version"       : "0.2",
     "auth"          : "github:thundergnat",
     "authors"       : ["Steve Schulze"],
