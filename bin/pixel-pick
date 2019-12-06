@@ -1,27 +1,29 @@
 #!/usr/bin/env perl6
 
-my $version = v0.1;
+my $version = v0.2;
 
-use GD::Raw;
 use File::Temp;
 
 # Control-C exit
-signal(SIGINT).tap: { cleanup(); print "\n" xx 50, "\e[H\e[J"; exit(0) }
+signal(SIGINT).tap: { sleep .3; cleanup(); print "\n" xx 50, "\e[H\e[J"; exit(0) }
 
 # Control-Z exit
 signal(SIGTSTP).tap: { sleep .3; print "\r  \n"; cleanup(); exit(0) }
 
-my ($x, $y, $scr);
+my ($x, $y);
 my ($lx, $ly) = 0, 0;
 my $indent = '    ';
 my ($red, $green, $blue);
+
+# tempfile automatically destroyed on exit
+my ($tempfile) = tempfile( :suffix(".png") );
 
 multi MAIN () {
     use X11::libxdo;
     my $xdo = Xdo.new;
     loop {
-        sleep .01;
-        ($x, $y, $scr) = $xdo.get-mouse-location;
+        sleep .1;
+        ($x, $y, $) = $xdo.get-mouse-location;
         next if $lx == $x and $ly == $y;
         ($lx, $ly) = $x, $y;
         get-pixel();
@@ -42,9 +44,9 @@ multi MAIN (
 
     if $q {
         if $q.lc eq 'h' {
-             printf "%X:%X:%X\n", $red,$green,$blue;
+             printf "%02X:%02X:%02X\n", $red,$green,$blue;
          } else {
-             say "$red:$green:$blue";
+             printf "%03d:%03d:%03d\n", $red,$green,$blue;
          }
     } else {
         display();
@@ -54,28 +56,29 @@ multi MAIN (
 }
 
 sub get-pixel {
-    # tempfile automatically destroyed on exit
-    my ($tempfile) = tempfile( :suffix(".png") );
 
-    # import is installed as part of MagickWand. Most Linuxes already
-    #  have. If not, need to install libmagickwand
-    qqx/import -window root $tempfile/;
+    # import and convert are installed as part of MagickWand. Most Linuxes
+    # already have them. If not, need to install libmagickwand
 
-    my $fh    = fopen($tempfile, "rb") or die;
-    my $image = gdImageCreateFromPng($fh);
-    my $pixel = gdImageGetPixel($image, $x, $y);
-    ($red,$green,$blue) =
-        gdImageRed(  $image, $pixel),
-        gdImageGreen($image, $pixel),
-        gdImageBlue( $image, $pixel);
-    gdImageDestroy($image); # clean up memory
-    fclose($fh); # close file handle
+    qqx/import -window root -crop 1x1+{$x-1 max 0}+{$y-2 max 0} $tempfile/;
+
+    sleep .01; # ensure previous file operation has time to complete
+
+    ($red,$green,$blue) = Any, Any, Any;
+
+    my $fmt = '%[pixel:p{0,0}]'; #formatting string to retreive pixel info
+
+    my $color = qqx/convert $tempfile -format '$fmt' info:-/;
+
+    ($red, $green, $blue) = $color.comb(/\d+/);
+    $green //= $red;
+    $blue  //= $red
 }
 
 sub display {
     print "\e[?25l\e[48;2;0;0;0m\e[38;2;255;255;255m\e[H\e[J";
     printf "   v$version | x: %4d y: $y\n", $x;
-    printf "{$indent}RGB: %3d  %3d  %3d \n{$indent}HEX: %3X  %3X  %3X\n",
+    printf "{$indent}  RGB: %03d:%03d:%03d \n{$indent}  HEX: %02X:%02X:%02X\n",
             $red, $green, $blue, $red, $green, $blue;
     print "\e[38;2;{$red};{$green};{$blue}m{$indent}",
            ('█' x 18 xx 6).join: "\n{$indent}";
