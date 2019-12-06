@@ -10,10 +10,10 @@ pixel in an X11 environment.
     zef install App::pixel-pick
 
 
-Needs to have the `import` and `convert` utilities available. Those are part of
-the `MagickWand` package. Most Linuxes have them already, if not, install `
-libmagickwand`. May want to install `libmagickwand-dev` as well, though it isn't
-strictly necessary for this app.
+Needs to have the `import` utility available. Installed part of the `MagickWand`
+package. Most Linuxes have it already, if not, install ` libmagickwand`. May
+want to install `libmagickwand-dev` as well, though it isn't strictly necessary
+for this app.
 
 ### Use
 
