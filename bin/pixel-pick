@@ -52,18 +52,14 @@ multi MAIN (
 
 sub get-pixel {
 
-    my $fmt = '%[pixel:p{0,0}]'; #formatting string to retreive pixel info
-
     # import is installed as part of MagickWand. Most Linuxes
     # already has it. If not, need to install libmagickwand
 
-    my $color = qqx/import -window root -crop 1x1+{$x-1 max 0}+{$y-2 max 0} -format '$fmt' info:-/;
+    my $xcolor =
+      qqx/import -window root -crop 1x1+{$x-1 max 0}+{$y-2 max 0} -depth 8 txt:-/
+      .comb(/<?after '#'><xdigit> ** 6/);
 
-    ($red, $green, $blue) = Any, Any, Any;
-    ($red, $green, $blue) = $color.comb(/\d+/);
-    $red   //= 0;
-    $green //= $red;
-    $blue  //= $red
+    ($red, $green, $blue) = $xcolor.comb(2)».parse-base(16);
 }
 
 sub display {
