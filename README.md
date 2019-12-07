@@ -3,7 +3,7 @@
 Get the color of any screen pixel in an X11 environment.
 
 Simple command-line app to allow you to get the RGB color of ___any___ screen
-pixel in an X11 environment.
+pixel in an X11 environment, even those controlled by another application.
 
 ### Install
 

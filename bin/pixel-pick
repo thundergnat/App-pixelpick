@@ -26,7 +26,7 @@ multi MAIN () {
     }
     $xdo = ();
 }
-$green //= $red;
+
 my %*SUB-MAIN-OPTS = :named-anywhere;
 
 multi MAIN (
@@ -34,15 +34,15 @@ multi MAIN (
     Int $Y,    #= Integer y coordinate to pick
     $q = False #= Boolean "quiet" mode, set to 'h' for hex values
   ) {
-    ($x, $y) = +$X, +$Y;
+    ($x, $y) = $X, $Y;
     get-pixel();
 
     if $q {
         if $q.lc eq 'h' {
-             printf "%02X:%02X:%02X\n", $red,$green,$blue;
-         } else {
-             printf "%03d:%03d:%03d\n", $red,$green,$blue;
-         }
+            printf "%02X:%02X:%02X\n", $red,$green,$blue;
+        } else {
+            printf "%03d:%03d:%03d\n", $red,$green,$blue;
+        }
     } else {
         display();
         cleanup();
@@ -68,8 +68,7 @@ sub display {
     printf "{$indent}  RGB: %03d:%03d:%03d \n{$indent}  HEX: %02X:%02X:%02X\n",
             $red, $green, $blue, $red, $green, $blue;
     print "\e[38;2;{$red};{$green};{$blue}m{$indent}",
-           ('█' x 18 xx 6).join: "\n{$indent}";
-    print "\n\n";
+           ('█' x 18 xx 6).join("\n{$indent}"), "\n\n";
 }
 
 sub cleanup { print "\e[0m\e[?25h" }
