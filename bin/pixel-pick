@@ -1,56 +1,47 @@
 #!/usr/bin/env perl6
 
-my $version = v0.4;
+my $version = v0.5;
 
 # Control-C exit
-signal(SIGINT).tap: { sleep .3; cleanup(); print "\n" xx 50, "\e[H\e[J"; exit(0) }
+signal(SIGINT).tap: { sleep .1; cleanup(); print "\n" xx 50, "\e[H\e[J"; exit(0) }
 
 # Control-Z exit
-signal(SIGTSTP).tap: { sleep .3; print "\r  \n"; cleanup(); exit(0) }
-
-my ($x, $y);
-my ($lx, $ly) = 0, 0;
-my $indent = '    ';
-my ($red, $green, $blue);
+signal(SIGTSTP).tap: { sleep .1; print "\r  \n"; cleanup(); exit(0) }
 
 multi MAIN () {
     use X11::libxdo;
     my $xdo = Xdo.new;
+    my ($lx, $ly) = 0, 0;
     loop {
         sleep .1;
-        ($x, $y, $) = $xdo.get-mouse-location;
+        my ($x, $y, $) = $xdo.get-mouse-location;
         next if $lx == $x and $ly == $y;
         ($lx, $ly) = $x, $y;
-        get-pixel();
-        display();
+        display $x, $y, |get-pixel($x, $y);
     }
-    $xdo = ();
 }
 
 my %*SUB-MAIN-OPTS = :named-anywhere;
 
 multi MAIN (
-    Int $X,    #= Integer x coodinte to pick
-    Int $Y,    #= Integer y coordinate to pick
-    $q = False #= Boolean "quiet" mode, set to 'h' for hex values
+    Int $x,    #= Integer x coordinate to pick
+    Int $y,    #= Integer y coordinate to pick
+    $q = False #= Boolean "quiet" mode, set truthy for decimal values, set to h for hex values
   ) {
-    ($x, $y) = $X, $Y;
-    get-pixel();
+    my ($red, $green, $blue) = get-pixel($x, $y);
 
     if $q {
-        if $q.lc eq 'h' {
-            printf "%02X:%02X:%02X\n", $red,$green,$blue;
-        } else {
-            printf "%03d:%03d:%03d\n", $red,$green,$blue;
-        }
+        $q.lc eq 'h' ??
+          ( printf "%02X:%02X:%02X\n", $red, $green, $blue ) !!
+          ( printf "%03d:%03d:%03d\n", $red, $green, $blue );
     } else {
-        display();
+        display($x, $y, $red, $green, $blue);
         cleanup();
     }
     exit(0);
 }
 
-sub get-pixel {
+sub get-pixel ($x, $y) {
 
     # import is installed as part of MagickWand. Most Linuxes
     # already have it. If not, need to install libmagickwand
@@ -59,15 +50,16 @@ sub get-pixel {
       qqx/import -window root -crop 1x1+{$x-1 max 0}+{$y-2 max 0} -depth 8 txt:-/
       .comb(/<?after '#'><xdigit> ** 6/);
 
-    ($red, $green, $blue) = $xcolor.comb(2)».parse-base(16);
+    |$xcolor.comb(2)».parse-base(16);
 }
 
-sub display {
+sub display ($x, $y, $r, $g, $b) {
+    my $indent = '    ';
     print "\e[?25l\e[48;2;0;0;0m\e[38;2;255;255;255m\e[H\e[J";
-    printf "   v$version | x: %4d y: $y\n", $x;
+    printf "{$indent}v$version | x: %4d y: $y\n", $x;
     printf "{$indent}  RGB: %03d:%03d:%03d \n{$indent}  HEX: %02X:%02X:%02X\n",
-            $red, $green, $blue, $red, $green, $blue;
-    print "\e[38;2;{$red};{$green};{$blue}m{$indent}",
+            $r, $g, $b, $r, $g, $b;
+    print "\e[38;2;{$r};{$g};{$b}m{$indent}",
            ('█' x 18 xx 6).join("\n{$indent}"), "\n\n";
 }
 
