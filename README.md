@@ -14,6 +14,10 @@ package. Most Linuxes have it already, if not, install ` libmagickwand`. May
 want to install `libmagickwand-dev` as well, though it isn't strictly necessary
 for this app.
 
+    sudo apt-get install libmagickwand-dev
+
+For Debian based distributions.
+
 ### Use
 
 #### Interactive:
@@ -22,11 +26,15 @@ for this app.
 
 If invoked with no parameters, runs in interactive mode. Will get the color of
 the pixel under the mouse pointer and show the RGB values in both decimal and
-hexadecimal. Will display a small block colored to that value. Updates
-(moderately) slowly as the mouse is moved. There is some delay just to slow down
-the "busy" loop of checking to see if the mouse has moved. Will not attempt to
-update if the mouse has not moved. Uses the `X11::xdo` module to capture mouse
-motion so will only work in an X11 environment.
+hexadecimal. Will display a small block colored to that value, and will display
+colored blocks of "Named colors" with their RGB values that are "near" the
+selected color. Uses the XKCD color list from the Color::Names module as its
+list of known colors.
+
+Updates (moderately) slowly as the mouse is moved. There is some delay just to
+slow down the "busy" loop of checking to see if the mouse has moved. Will not
+attempt to update if the mouse has not moved. Uses the `X11::xdo` module to
+capture mouse motion so will only work in an X11 environment.
 
 Note that screen sub-pixel dithering may lead to some unexpected values being
 returned, especially around small text. The utility returns what the pixel color
