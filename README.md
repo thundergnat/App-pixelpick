@@ -41,6 +41,7 @@ just the nearest found in the list. Uses the XKCD and X11 color name lists from
 the Color::Names module as its list of known colors.
 
 See https://www.w3schools.com/colors/colors_xkcd.asp XKCD color blocks
+
 And https://www.w3schools.com/colors/colors_x11.asp  X11 color blocks
 
 Updates (moderately) slowly as the mouse is moved. There is some delay just to
