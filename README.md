@@ -24,12 +24,24 @@ For Debian based distributions.
 
     pixel-pick
 
-If invoked with no parameters, runs in interactive mode. Will get the color of
-the pixel under the mouse pointer and show the RGB values in both decimal and
-hexadecimal. Will display a small block colored to that value, and will display
-colored blocks of "Named colors" with their RGB values that are "near" the
-selected color. Uses the XKCD color list from the Color::Names module as its
-list of known colors.
+or
+
+    pixel-pick --distance=Int
+
+If invoked with no positional parameters, runs in interactive mode. Will get the
+color of the pixel under the mouse pointer and show the RGB values in both
+decimal and hexadecimal formats and will display a small block colored to that
+value, Will also display colored blocks of "Named colors", along with their RGB
+values, that are "near" the selected color. Will accept an Integer "distance"
+parameter at the command line to fine tune the cutoff for what is "near".
+(Defaults to 20. More than about 80 or so is not recommended. You'll get
+unusefully large numbers of matches.) Will always return at least one "nearest"
+color, no matter what the threshold is. The colors may not be exact, they are
+just the nearest found in the list. Uses the XKCD and X11 color name lists from
+the Color::Names module as its list of known colors.
+
+See https://www.w3schools.com/colors/colors_xkcd.asp XKCD color blocks
+And https://www.w3schools.com/colors/colors_x11.asp  X11 color blocks
 
 Updates (moderately) slowly as the mouse is moved. There is some delay just to
 slow down the "busy" loop of checking to see if the mouse has moved. Will not
@@ -48,11 +60,11 @@ effectively leaving the last values displayed.
 
 #### Non-interactive: (Get the color of the pixel at 100, 200)
 
-    pixel-pick 100 200
+    pixel-pick 100 200 (--distance=Int)
 
-If invoked with X, Y coordinates, runs non-interactive. Gets the pixel color at
-that coordinate and exits immediately, doing the partial cleanup as you would
-get from Control-Z.
+If invoked with X, Y coordinates, (--distance parameter optional) runs
+non-interactive. Gets the pixel color at that coordinate and exits immediately,
+doing the partial cleanup as you would get from Control-Z.
 
 #### Non-interactive, quiet: (Get the RGB values of the pixel at 100, 200)
 

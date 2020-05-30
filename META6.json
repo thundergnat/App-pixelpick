@@ -10,7 +10,7 @@
     "depends"       : [ "X11::libxdo", "Color::Names" ],
     "test-depends"  : [ "Test" ],
     "build-depends" : [ ],
-    "tags"          : [ "RGB", "color", "color pick" ],
+    "tags"          : [ "RGB", "color", "color pick", "XKCD", "X11" ],
     "support"       : {
         "source"     : "https://github.com/thundergnat/perl6-App-pixel-pick.git",
         "bugtracker" : "https://github.com/thundergnat/perl6-App-pixel-pick/issues"

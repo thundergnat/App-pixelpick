@@ -1,10 +1,403 @@
 #!/usr/bin/env perl6
 
-use Color::Names::XKCD;
+use Color::Names;
 
-my %c = Color::Names::XKCD.color-data;
+# Unfortuately, the Color::Names::X11 names list is massivley cut-down.
+# Reimplement from X11/rgb.txt
+
+my %c =
+    'aliceblue'            => { list => 'X11', rgb => [0xf0, 0xf8, 0xff], name => 'Alice Blue' },
+    'antiquewhite'         => { list => 'X11', rgb => [0xfa, 0xeb, 0xd7], name => 'Antique White' },
+    'aquamarine'           => { list => 'X11', rgb => [0x7f, 0xff, 0xd4], name => 'Aquamarine' },
+    'aquamarine1'          => { list => 'X11', rgb => [0x7f, 0xff, 0xd4], name => 'Aquamarine 1' },
+    'aquamarine2'          => { list => 'X11', rgb => [0x76, 0xee, 0xc6], name => 'Aquamarine 2' },
+    'aquamarine3'          => { list => 'X11', rgb => [0x66, 0xcd, 0xaa], name => 'Aquamarine 3' },
+    'aquamarine4'          => { list => 'X11', rgb => [0x45, 0x8b, 0x74], name => 'Aquamarine 4' },
+    'azure'                => { list => 'X11', rgb => [0xf0, 0xff, 0xff], name => 'Azure' },
+    'azure1'               => { list => 'X11', rgb => [0xf0, 0xff, 0xff], name => 'Azure 1' },
+    'azure2'               => { list => 'X11', rgb => [0xe0, 0xee, 0xee], name => 'Azure 2' },
+    'azure3'               => { list => 'X11', rgb => [0xc1, 0xcd, 0xcd], name => 'Azure 3' },
+    'azure4'               => { list => 'X11', rgb => [0x83, 0x8b, 0x8b], name => 'Azure 4' },
+    'beige'                => { list => 'X11', rgb => [0xf5, 0xf5, 0xdc], name => 'Beige' },
+    'bisque'               => { list => 'X11', rgb => [0xff, 0xe4, 0xc4], name => 'Bisque' },
+    'bisque1'              => { list => 'X11', rgb => [0xff, 0xe4, 0xc4], name => 'Bisque 1' },
+    'bisque2'              => { list => 'X11', rgb => [0xee, 0xd5, 0xb7], name => 'Bisque 2' },
+    'bisque3'              => { list => 'X11', rgb => [0xcd, 0xb7, 0x9e], name => 'Bisque 3' },
+    'bisque4'              => { list => 'X11', rgb => [0x8b, 0x7d, 0x6b], name => 'Bisque 4' },
+    'black'                => { list => 'X11', rgb => [0x00, 0x00, 0x00], name => 'Black' },
+    'blanchedalmond'       => { list => 'X11', rgb => [0xff, 0xeb, 0xcd], name => 'Blanched Almond' },
+    'blue'                 => { list => 'X11', rgb => [0x00, 0x00, 0xff], name => 'Blue' },
+    'blue1'                => { list => 'X11', rgb => [0x00, 0x00, 0xff], name => 'Blue 1' },
+    'blue2'                => { list => 'X11', rgb => [0x00, 0x00, 0xee], name => 'Blue 2' },
+    'blue3'                => { list => 'X11', rgb => [0x00, 0x00, 0xcd], name => 'Blue 3' },
+    'blue4'                => { list => 'X11', rgb => [0x00, 0x00, 0x8b], name => 'Blue 4' },
+    'blueviolet'           => { list => 'X11', rgb => [0x8a, 0x2b, 0xe2], name => 'Blue Violet' },
+    'brown'                => { list => 'X11', rgb => [0xa5, 0x2a, 0x2a], name => 'Brown' },
+    'brown1'               => { list => 'X11', rgb => [0xff, 0x40, 0x40], name => 'Brown 1' },
+    'brown2'               => { list => 'X11', rgb => [0xee, 0x3b, 0x3b], name => 'Brown 2' },
+    'brown3'               => { list => 'X11', rgb => [0xcd, 0x33, 0x33], name => 'Brown 3' },
+    'brown4'               => { list => 'X11', rgb => [0x8b, 0x23, 0x23], name => 'Brown 4' },
+    'burlywood'            => { list => 'X11', rgb => [0xde, 0xb8, 0x87], name => 'Burlywood' },
+    'burlywood1'           => { list => 'X11', rgb => [0xff, 0xd3, 0x9b], name => 'Burlywood 1' },
+    'burlywood2'           => { list => 'X11', rgb => [0xee, 0xc5, 0x91], name => 'Burlywood 2' },
+    'burlywood3'           => { list => 'X11', rgb => [0xcd, 0xaa, 0x7d], name => 'Burlywood 3' },
+    'burlywood4'           => { list => 'X11', rgb => [0x8b, 0x73, 0x55], name => 'Burlywood 4' },
+    'cadetblue'            => { list => 'X11', rgb => [0x5f, 0x9e, 0xa0], name => 'Cadet Blue' },
+    'chartreuse'           => { list => 'X11', rgb => [0x7f, 0xff, 0x00], name => 'Chartreuse' },
+    'chartreuse1'          => { list => 'X11', rgb => [0x7f, 0xff, 0x00], name => 'Chartreuse 1' },
+    'chartreuse2'          => { list => 'X11', rgb => [0x76, 0xee, 0x00], name => 'Chartreuse 2' },
+    'chartreuse3'          => { list => 'X11', rgb => [0x66, 0xcd, 0x00], name => 'Chartreuse 3' },
+    'chartreuse4'          => { list => 'X11', rgb => [0x45, 0x8b, 0x00], name => 'Chartreuse 4' },
+    'chocolate'            => { list => 'X11', rgb => [0xd2, 0x69, 0x1e], name => 'Chocolate' },
+    'chocolate1'           => { list => 'X11', rgb => [0xff, 0x7f, 0x24], name => 'Chocolate 1' },
+    'chocolate2'           => { list => 'X11', rgb => [0xee, 0x76, 0x21], name => 'Chocolate 2' },
+    'chocolate3'           => { list => 'X11', rgb => [0xcd, 0x66, 0x1d], name => 'Chocolate 3' },
+    'chocolate4'           => { list => 'X11', rgb => [0x8b, 0x45, 0x13], name => 'Chocolate 4' },
+    'coral'                => { list => 'X11', rgb => [0xff, 0x7f, 0x50], name => 'Coral' },
+    'coral1'               => { list => 'X11', rgb => [0xff, 0x72, 0x56], name => 'Coral 1' },
+    'coral2'               => { list => 'X11', rgb => [0xee, 0x6a, 0x50], name => 'Coral 2' },
+    'coral3'               => { list => 'X11', rgb => [0xcd, 0x5b, 0x45], name => 'Coral 3' },
+    'coral4'               => { list => 'X11', rgb => [0x8b, 0x3e, 0x2f], name => 'Coral 4' },
+    'cornflowerblue'       => { list => 'X11', rgb => [0x64, 0x95, 0xed], name => 'Cornflower Blue' },
+    'cornsilk'             => { list => 'X11', rgb => [0xff, 0xf8, 0xdc], name => 'Cornsilk' },
+    'cornsilk1'            => { list => 'X11', rgb => [0xff, 0xf8, 0xdc], name => 'Cornsilk 1' },
+    'cornsilk2'            => { list => 'X11', rgb => [0xee, 0xe8, 0xcd], name => 'Cornsilk 2' },
+    'cornsilk3'            => { list => 'X11', rgb => [0xcd, 0xc8, 0xb1], name => 'Cornsilk 3' },
+    'cornsilk4'            => { list => 'X11', rgb => [0x8b, 0x88, 0x78], name => 'Cornsilk 4' },
+    'cyan'                 => { list => 'X11', rgb => [0x00, 0xff, 0xff], name => 'Cyan' },
+    'cyan1'                => { list => 'X11', rgb => [0x00, 0xff, 0xff], name => 'Cyan 1' },
+    'cyan2'                => { list => 'X11', rgb => [0x00, 0xee, 0xee], name => 'Cyan 2' },
+    'cyan3'                => { list => 'X11', rgb => [0x00, 0xcd, 0xcd], name => 'Cyan 3' },
+    'cyan4'                => { list => 'X11', rgb => [0x00, 0x8b, 0x8b], name => 'Cyan 4' },
+    'darkblue'             => { list => 'X11', rgb => [0x00, 0x00, 0x8b], name => 'Dark Blue' },
+    'darkcyan'             => { list => 'X11', rgb => [0x00, 0x8b, 0x8b], name => 'Dark Cyan' },
+    'darkgoldenrod'        => { list => 'X11', rgb => [0xb8, 0x86, 0x0b], name => 'Dark Goldenrod' },
+    'darkgray'             => { list => 'X11', rgb => [0xa9, 0xa9, 0xa9], name => 'Dark Gray' },
+    'darkgreen'            => { list => 'X11', rgb => [0x00, 0x64, 0x00], name => 'Dark Green' },
+    'darkgrey'             => { list => 'X11', rgb => [0xa9, 0xa9, 0xa9], name => 'Dark Grey' },
+    'darkkhaki'            => { list => 'X11', rgb => [0xbd, 0xb7, 0x6b], name => 'Dark Khaki' },
+    'darkmagenta'          => { list => 'X11', rgb => [0x8b, 0x00, 0x8b], name => 'Dark Magenta' },
+    'darkolivegreen'       => { list => 'X11', rgb => [0x55, 0x6b, 0x2f], name => 'Dark Olive Green' },
+    'darkorange'           => { list => 'X11', rgb => [0xff, 0x8c, 0x00], name => 'Dark Orange' },
+    'darkorchid'           => { list => 'X11', rgb => [0x99, 0x32, 0xcc], name => 'Dark Orchid' },
+    'darkred'              => { list => 'X11', rgb => [0x8b, 0x00, 0x00], name => 'Dark Red' },
+    'darksalmon'           => { list => 'X11', rgb => [0xe9, 0x96, 0x7a], name => 'Dark Salmon' },
+    'darkseagreen'         => { list => 'X11', rgb => [0x8f, 0xbc, 0x8f], name => 'Dark Sea Green' },
+    'darkslateblue'        => { list => 'X11', rgb => [0x48, 0x3d, 0x8b], name => 'Dark Slate Blue' },
+    'darkslategray'        => { list => 'X11', rgb => [0x2f, 0x4f, 0x4f], name => 'Dark Slate Gray' },
+    'darkslategrey'        => { list => 'X11', rgb => [0x2f, 0x4f, 0x4f], name => 'Dark Slate Grey' },
+    'darkturquoise'        => { list => 'X11', rgb => [0x00, 0xce, 0xd1], name => 'Dark Turquoise' },
+    'darkviolet'           => { list => 'X11', rgb => [0x94, 0x00, 0xd3], name => 'Dark Violet' },
+    'deeppink'             => { list => 'X11', rgb => [0xff, 0x14, 0x93], name => 'Deep Pink' },
+    'deepskyblue'          => { list => 'X11', rgb => [0x00, 0xbf, 0xff], name => 'Deep Sky Blue' },
+    'dimgray'              => { list => 'X11', rgb => [0x69, 0x69, 0x69], name => 'Dim Gray' },
+    'dimgrey'              => { list => 'X11', rgb => [0x69, 0x69, 0x69], name => 'Dim Grey' },
+    'dodgerblue'           => { list => 'X11', rgb => [0x1e, 0x90, 0xff], name => 'Dodger Blue' },
+    'firebrick'            => { list => 'X11', rgb => [0xb2, 0x22, 0x22], name => 'Firebrick' },
+    'firebrick1'           => { list => 'X11', rgb => [0xff, 0x30, 0x30], name => 'Firebrick 1' },
+    'firebrick2'           => { list => 'X11', rgb => [0xee, 0x2c, 0x2c], name => 'Firebrick 2' },
+    'firebrick3'           => { list => 'X11', rgb => [0xcd, 0x26, 0x26], name => 'Firebrick 3' },
+    'firebrick4'           => { list => 'X11', rgb => [0x8b, 0x1a, 0x1a], name => 'Firebrick 4' },
+    'floralwhite'          => { list => 'X11', rgb => [0xff, 0xfa, 0xf0], name => 'Floral White' },
+    'forestgreen'          => { list => 'X11', rgb => [0x22, 0x8b, 0x22], name => 'Forest Green' },
+    'gainsboro'            => { list => 'X11', rgb => [0xdc, 0xdc, 0xdc], name => 'Gainsboro' },
+    'ghostwhite'           => { list => 'X11', rgb => [0xf8, 0xf8, 0xff], name => 'Ghost White' },
+    'gold'                 => { list => 'X11', rgb => [0xff, 0xd7, 0x00], name => 'Gold' },
+    'gold1'                => { list => 'X11', rgb => [0xff, 0xd7, 0x00], name => 'Gold 1' },
+    'gold2'                => { list => 'X11', rgb => [0xee, 0xc9, 0x00], name => 'Gold 2' },
+    'gold3'                => { list => 'X11', rgb => [0xcd, 0xad, 0x00], name => 'Gold 3' },
+    'gold4'                => { list => 'X11', rgb => [0x8b, 0x75, 0x00], name => 'Gold 4' },
+    'goldenrod'            => { list => 'X11', rgb => [0xda, 0xa5, 0x20], name => 'Goldenrod' },
+    'goldenrod1'           => { list => 'X11', rgb => [0xff, 0xc1, 0x25], name => 'Goldenrod 1' },
+    'goldenrod2'           => { list => 'X11', rgb => [0xee, 0xb4, 0x22], name => 'Goldenrod 2' },
+    'goldenrod3'           => { list => 'X11', rgb => [0xcd, 0x9b, 0x1d], name => 'Goldenrod 3' },
+    'goldenrod4'           => { list => 'X11', rgb => [0x8b, 0x69, 0x14], name => 'Goldenrod 4' },
+    'gray'                 => { list => 'X11', rgb => [0xbe, 0xbe, 0xbe], name => 'Gray' },
+    'gray0'                => { list => 'X11', rgb => [0x00, 0x00, 0x00], name => 'Gray 0' },
+    'gray1'                => { list => 'X11', rgb => [0x03, 0x03, 0x03], name => 'Gray 1' },
+    'gray2'                => { list => 'X11', rgb => [0x05, 0x05, 0x05], name => 'Gray 2' },
+    'gray3'                => { list => 'X11', rgb => [0x08, 0x08, 0x08], name => 'Gray 3' },
+    'gray4'                => { list => 'X11', rgb => [0x0a, 0x0a, 0x0a], name => 'Gray 4' },
+    'gray5'                => { list => 'X11', rgb => [0x0d, 0x0d, 0x0d], name => 'Gray 5' },
+    'gray6'                => { list => 'X11', rgb => [0x0f, 0x0f, 0x0f], name => 'Gray 6' },
+    'gray7'                => { list => 'X11', rgb => [0x12, 0x12, 0x12], name => 'Gray 7' },
+    'gray8'                => { list => 'X11', rgb => [0x14, 0x14, 0x14], name => 'Gray 8' },
+    'gray9'                => { list => 'X11', rgb => [0x17, 0x17, 0x17], name => 'Gray 9' },
+    'gray10'               => { list => 'X11', rgb => [0x1a, 0x1a, 0x1a], name => 'Gray 10' },
+    'gray11'               => { list => 'X11', rgb => [0x1c, 0x1c, 0x1c], name => 'Gray 11' },
+    'gray12'               => { list => 'X11', rgb => [0x1f, 0x1f, 0x1f], name => 'Gray 12' },
+    'gray13'               => { list => 'X11', rgb => [0x21, 0x21, 0x21], name => 'Gray 13' },
+    'gray14'               => { list => 'X11', rgb => [0x24, 0x24, 0x24], name => 'Gray 14' },
+    'gray15'               => { list => 'X11', rgb => [0x26, 0x26, 0x26], name => 'Gray 15' },
+    'gray16'               => { list => 'X11', rgb => [0x29, 0x29, 0x29], name => 'Gray 16' },
+    'gray17'               => { list => 'X11', rgb => [0x2b, 0x2b, 0x2b], name => 'Gray 17' },
+    'gray18'               => { list => 'X11', rgb => [0x2e, 0x2e, 0x2e], name => 'Gray 18' },
+    'gray19'               => { list => 'X11', rgb => [0x30, 0x30, 0x30], name => 'Gray 19' },
+    'gray20'               => { list => 'X11', rgb => [0x33, 0x33, 0x33], name => 'Gray 20' },
+    'gray21'               => { list => 'X11', rgb => [0x36, 0x36, 0x36], name => 'Gray 21' },
+    'gray22'               => { list => 'X11', rgb => [0x38, 0x38, 0x38], name => 'Gray 22' },
+    'gray23'               => { list => 'X11', rgb => [0x3b, 0x3b, 0x3b], name => 'Gray 23' },
+    'gray24'               => { list => 'X11', rgb => [0x3d, 0x3d, 0x3d], name => 'Gray 24' },
+    'gray25'               => { list => 'X11', rgb => [0x40, 0x40, 0x40], name => 'Gray 25' },
+    'gray26'               => { list => 'X11', rgb => [0x42, 0x42, 0x42], name => 'Gray 26' },
+    'gray27'               => { list => 'X11', rgb => [0x45, 0x45, 0x45], name => 'Gray 27' },
+    'gray28'               => { list => 'X11', rgb => [0x47, 0x47, 0x47], name => 'Gray 28' },
+    'gray29'               => { list => 'X11', rgb => [0x4a, 0x4a, 0x4a], name => 'Gray 29' },
+    'gray30'               => { list => 'X11', rgb => [0x4d, 0x4d, 0x4d], name => 'Gray 30' },
+    'gray31'               => { list => 'X11', rgb => [0x4f, 0x4f, 0x4f], name => 'Gray 31' },
+    'gray32'               => { list => 'X11', rgb => [0x52, 0x52, 0x52], name => 'Gray 32' },
+    'gray33'               => { list => 'X11', rgb => [0x54, 0x54, 0x54], name => 'Gray 33' },
+    'gray34'               => { list => 'X11', rgb => [0x57, 0x57, 0x57], name => 'Gray 34' },
+    'gray35'               => { list => 'X11', rgb => [0x59, 0x59, 0x59], name => 'Gray 35' },
+    'gray36'               => { list => 'X11', rgb => [0x5c, 0x5c, 0x5c], name => 'Gray 36' },
+    'gray37'               => { list => 'X11', rgb => [0x5e, 0x5e, 0x5e], name => 'Gray 37' },
+    'gray38'               => { list => 'X11', rgb => [0x61, 0x61, 0x61], name => 'Gray 38' },
+    'gray39'               => { list => 'X11', rgb => [0x63, 0x63, 0x63], name => 'Gray 39' },
+    'gray40'               => { list => 'X11', rgb => [0x66, 0x66, 0x66], name => 'Gray 40' },
+    'gray41'               => { list => 'X11', rgb => [0x69, 0x69, 0x69], name => 'Gray 41' },
+    'gray42'               => { list => 'X11', rgb => [0x6b, 0x6b, 0x6b], name => 'Gray 42' },
+    'gray43'               => { list => 'X11', rgb => [0x6e, 0x6e, 0x6e], name => 'Gray 43' },
+    'gray44'               => { list => 'X11', rgb => [0x70, 0x70, 0x70], name => 'Gray 44' },
+    'gray45'               => { list => 'X11', rgb => [0x73, 0x73, 0x73], name => 'Gray 45' },
+    'gray46'               => { list => 'X11', rgb => [0x75, 0x75, 0x75], name => 'Gray 46' },
+    'gray47'               => { list => 'X11', rgb => [0x78, 0x78, 0x78], name => 'Gray 47' },
+    'gray48'               => { list => 'X11', rgb => [0x7a, 0x7a, 0x7a], name => 'Gray 48' },
+    'gray49'               => { list => 'X11', rgb => [0x7d, 0x7d, 0x7d], name => 'Gray 49' },
+    'gray50'               => { list => 'X11', rgb => [0x7f, 0x7f, 0x7f], name => 'Gray 50' },
+    'gray51'               => { list => 'X11', rgb => [0x82, 0x82, 0x82], name => 'Gray 51' },
+    'gray52'               => { list => 'X11', rgb => [0x85, 0x85, 0x85], name => 'Gray 52' },
+    'gray53'               => { list => 'X11', rgb => [0x87, 0x87, 0x87], name => 'Gray 53' },
+    'gray54'               => { list => 'X11', rgb => [0x8a, 0x8a, 0x8a], name => 'Gray 54' },
+    'gray55'               => { list => 'X11', rgb => [0x8c, 0x8c, 0x8c], name => 'Gray 55' },
+    'gray56'               => { list => 'X11', rgb => [0x8f, 0x8f, 0x8f], name => 'Gray 56' },
+    'gray57'               => { list => 'X11', rgb => [0x91, 0x91, 0x91], name => 'Gray 57' },
+    'gray58'               => { list => 'X11', rgb => [0x94, 0x94, 0x94], name => 'Gray 58' },
+    'gray59'               => { list => 'X11', rgb => [0x96, 0x96, 0x96], name => 'Gray 59' },
+    'gray60'               => { list => 'X11', rgb => [0x99, 0x99, 0x99], name => 'Gray 60' },
+    'gray61'               => { list => 'X11', rgb => [0x9c, 0x9c, 0x9c], name => 'Gray 61' },
+    'gray62'               => { list => 'X11', rgb => [0x9e, 0x9e, 0x9e], name => 'Gray 62' },
+    'gray63'               => { list => 'X11', rgb => [0xa1, 0xa1, 0xa1], name => 'Gray 63' },
+    'gray64'               => { list => 'X11', rgb => [0xa3, 0xa3, 0xa3], name => 'Gray 64' },
+    'gray65'               => { list => 'X11', rgb => [0xa6, 0xa6, 0xa6], name => 'Gray 65' },
+    'gray66'               => { list => 'X11', rgb => [0xa8, 0xa8, 0xa8], name => 'Gray 66' },
+    'gray67'               => { list => 'X11', rgb => [0xab, 0xab, 0xab], name => 'Gray 67' },
+    'gray68'               => { list => 'X11', rgb => [0xad, 0xad, 0xad], name => 'Gray 68' },
+    'gray69'               => { list => 'X11', rgb => [0xb0, 0xb0, 0xb0], name => 'Gray 69' },
+    'gray70'               => { list => 'X11', rgb => [0xb3, 0xb3, 0xb3], name => 'Gray 70' },
+    'gray71'               => { list => 'X11', rgb => [0xb5, 0xb5, 0xb5], name => 'Gray 71' },
+    'gray72'               => { list => 'X11', rgb => [0xb8, 0xb8, 0xb8], name => 'Gray 72' },
+    'gray73'               => { list => 'X11', rgb => [0xba, 0xba, 0xba], name => 'Gray 73' },
+    'gray74'               => { list => 'X11', rgb => [0xbd, 0xbd, 0xbd], name => 'Gray 74' },
+    'gray75'               => { list => 'X11', rgb => [0xbf, 0xbf, 0xbf], name => 'Gray 75' },
+    'gray76'               => { list => 'X11', rgb => [0xc2, 0xc2, 0xc2], name => 'Gray 76' },
+    'gray77'               => { list => 'X11', rgb => [0xc4, 0xc4, 0xc4], name => 'Gray 77' },
+    'gray78'               => { list => 'X11', rgb => [0xc7, 0xc7, 0xc7], name => 'Gray 78' },
+    'gray79'               => { list => 'X11', rgb => [0xc9, 0xc9, 0xc9], name => 'Gray 79' },
+    'gray80'               => { list => 'X11', rgb => [0xcc, 0xcc, 0xcc], name => 'Gray 80' },
+    'gray81'               => { list => 'X11', rgb => [0xcf, 0xcf, 0xcf], name => 'Gray 81' },
+    'gray82'               => { list => 'X11', rgb => [0xd1, 0xd1, 0xd1], name => 'Gray 82' },
+    'gray83'               => { list => 'X11', rgb => [0xd4, 0xd4, 0xd4], name => 'Gray 83' },
+    'gray84'               => { list => 'X11', rgb => [0xd6, 0xd6, 0xd6], name => 'Gray 84' },
+    'gray85'               => { list => 'X11', rgb => [0xd9, 0xd9, 0xd9], name => 'Gray 85' },
+    'gray86'               => { list => 'X11', rgb => [0xdb, 0xdb, 0xdb], name => 'Gray 86' },
+    'gray87'               => { list => 'X11', rgb => [0xde, 0xde, 0xde], name => 'Gray 87' },
+    'gray88'               => { list => 'X11', rgb => [0xe0, 0xe0, 0xe0], name => 'Gray 88' },
+    'gray89'               => { list => 'X11', rgb => [0xe3, 0xe3, 0xe3], name => 'Gray 89' },
+    'gray90'               => { list => 'X11', rgb => [0xe5, 0xe5, 0xe5], name => 'Gray 90' },
+    'gray91'               => { list => 'X11', rgb => [0xe8, 0xe8, 0xe8], name => 'Gray 91' },
+    'gray92'               => { list => 'X11', rgb => [0xeb, 0xeb, 0xeb], name => 'Gray 92' },
+    'gray93'               => { list => 'X11', rgb => [0xed, 0xed, 0xed], name => 'Gray 93' },
+    'gray94'               => { list => 'X11', rgb => [0xf0, 0xf0, 0xf0], name => 'Gray 94' },
+    'gray95'               => { list => 'X11', rgb => [0xf2, 0xf2, 0xf2], name => 'Gray 95' },
+    'gray96'               => { list => 'X11', rgb => [0xf5, 0xf5, 0xf5], name => 'Gray 96' },
+    'gray97'               => { list => 'X11', rgb => [0xf7, 0xf7, 0xf7], name => 'Gray 97' },
+    'gray98'               => { list => 'X11', rgb => [0xfa, 0xfa, 0xfa], name => 'Gray 98' },
+    'gray99'               => { list => 'X11', rgb => [0xfc, 0xfc, 0xfc], name => 'Gray 99' },
+    'gray100'              => { list => 'X11', rgb => [0xff, 0xff, 0xff], name => 'Gray 100' },
+    'green'                => { list => 'X11', rgb => [0x00, 0xff, 0x00], name => 'Green' },
+    'green1'               => { list => 'X11', rgb => [0x00, 0xff, 0x00], name => 'Green 1' },
+    'green2'               => { list => 'X11', rgb => [0x00, 0xee, 0x00], name => 'Green 2' },
+    'green3'               => { list => 'X11', rgb => [0x00, 0xcd, 0x00], name => 'Green 3' },
+    'green4'               => { list => 'X11', rgb => [0x00, 0x8b, 0x00], name => 'Green 4' },
+    'greenyellow'          => { list => 'X11', rgb => [0xad, 0xff, 0x2f], name => 'Green Yellow' },
+    'honeydew'             => { list => 'X11', rgb => [0xf0, 0xff, 0xf0], name => 'Honeydew' },
+    'honeydew1'            => { list => 'X11', rgb => [0xf0, 0xff, 0xf0], name => 'Honeydew 1' },
+    'honeydew2'            => { list => 'X11', rgb => [0xe0, 0xee, 0xe0], name => 'Honeydew 2' },
+    'honeydew3'            => { list => 'X11', rgb => [0xc1, 0xcd, 0xc1], name => 'Honeydew 3' },
+    'honeydew4'            => { list => 'X11', rgb => [0x83, 0x8b, 0x83], name => 'Honeydew 4' },
+    'hotpink'              => { list => 'X11', rgb => [0xff, 0x69, 0xb4], name => 'Hot Pink' },
+    'indianred'            => { list => 'X11', rgb => [0xcd, 0x5c, 0x5c], name => 'Indian Red' },
+    'ivory'                => { list => 'X11', rgb => [0xff, 0xff, 0xf0], name => 'Ivory' },
+    'ivory1'               => { list => 'X11', rgb => [0xff, 0xff, 0xf0], name => 'Ivory 1' },
+    'ivory2'               => { list => 'X11', rgb => [0xee, 0xee, 0xe0], name => 'Ivory 2' },
+    'ivory3'               => { list => 'X11', rgb => [0xcd, 0xcd, 0xc1], name => 'Ivory 3' },
+    'ivory4'               => { list => 'X11', rgb => [0x8b, 0x8b, 0x83], name => 'Ivory 4' },
+    'khaki'                => { list => 'X11', rgb => [0xf0, 0xe6, 0x8c], name => 'Khaki' },
+    'khaki1'               => { list => 'X11', rgb => [0xff, 0xf6, 0x8f], name => 'Khaki 1' },
+    'khaki2'               => { list => 'X11', rgb => [0xee, 0xe6, 0x85], name => 'Khaki 2' },
+    'khaki3'               => { list => 'X11', rgb => [0xcd, 0xc6, 0x73], name => 'Khaki 3' },
+    'khaki4'               => { list => 'X11', rgb => [0x8b, 0x86, 0x4e], name => 'Khaki 4' },
+    'lavender'             => { list => 'X11', rgb => [0xe6, 0xe6, 0xfa], name => 'Lavender' },
+    'lavenderblush'        => { list => 'X11', rgb => [0xff, 0xf0, 0xf5], name => 'Lavender Blush' },
+    'lawngreen'            => { list => 'X11', rgb => [0x7c, 0xfc, 0x00], name => 'Lawn Green' },
+    'lemonchiffon'         => { list => 'X11', rgb => [0xff, 0xfa, 0xcd], name => 'Lemon Chiffon' },
+    'lightblue'            => { list => 'X11', rgb => [0xad, 0xd8, 0xe6], name => 'Light Blue' },
+    'lightcoral'           => { list => 'X11', rgb => [0xf0, 0x80, 0x80], name => 'Light Coral' },
+    'lightcyan'            => { list => 'X11', rgb => [0xe0, 0xff, 0xff], name => 'Light Cyan' },
+    'lightgoldenrod'       => { list => 'X11', rgb => [0xee, 0xdd, 0x82], name => 'Light Goldenrod' },
+    'lightgoldenrodyellow' => { list => 'X11', rgb => [0xfa, 0xfa, 0xd2], name => 'Light Goldenrod Yellow' },
+    'lightgray'            => { list => 'X11', rgb => [0xd3, 0xd3, 0xd3], name => 'Light Gray' },
+    'lightgreen'           => { list => 'X11', rgb => [0x90, 0xee, 0x90], name => 'Light Green' },
+    'lightgrey'            => { list => 'X11', rgb => [0xd3, 0xd3, 0xd3], name => 'Light Grey' },
+    'lightpink'            => { list => 'X11', rgb => [0xff, 0xb6, 0xc1], name => 'Light Pink' },
+    'lightsalmon'          => { list => 'X11', rgb => [0xff, 0xa0, 0x7a], name => 'Light Salmon' },
+    'lightseagreen'        => { list => 'X11', rgb => [0x20, 0xb2, 0xaa], name => 'Light Sea Green' },
+    'lightskyblue'         => { list => 'X11', rgb => [0x87, 0xce, 0xfa], name => 'Light Sky Blue' },
+    'lightslateblue'       => { list => 'X11', rgb => [0x84, 0x70, 0xff], name => 'Light Slate Blue' },
+    'lightslategray'       => { list => 'X11', rgb => [0x77, 0x88, 0x99], name => 'Light Slate Gray' },
+    'lightslategrey'       => { list => 'X11', rgb => [0x77, 0x88, 0x99], name => 'Light Slate Grey' },
+    'lightsteelblue'       => { list => 'X11', rgb => [0xb0, 0xc4, 0xde], name => 'Light Steel Blue' },
+    'lightyellow'          => { list => 'X11', rgb => [0xff, 0xff, 0xe0], name => 'Light Yellow' },
+    'limegreen'            => { list => 'X11', rgb => [0x32, 0xcd, 0x32], name => 'Lime Green' },
+    'linen'                => { list => 'X11', rgb => [0xfa, 0xf0, 0xe6], name => 'Linen' },
+    'magenta'              => { list => 'X11', rgb => [0xff, 0x00, 0xff], name => 'Magenta' },
+    'magenta1'             => { list => 'X11', rgb => [0xff, 0x00, 0xff], name => 'Magenta 1' },
+    'magenta2'             => { list => 'X11', rgb => [0xee, 0x00, 0xee], name => 'Magenta 2' },
+    'magenta3'             => { list => 'X11', rgb => [0xcd, 0x00, 0xcd], name => 'Magenta 3' },
+    'magenta4'             => { list => 'X11', rgb => [0x8b, 0x00, 0x8b], name => 'Magenta 4' },
+    'maroon'               => { list => 'X11', rgb => [0xb0, 0x30, 0x60], name => 'Maroon' },
+    'maroon1'              => { list => 'X11', rgb => [0xff, 0x34, 0xb3], name => 'Maroon 1' },
+    'maroon2'              => { list => 'X11', rgb => [0xee, 0x30, 0xa7], name => 'Maroon 2' },
+    'maroon3'              => { list => 'X11', rgb => [0xcd, 0x29, 0x90], name => 'Maroon 3' },
+    'maroon4'              => { list => 'X11', rgb => [0x8b, 0x1c, 0x62], name => 'Maroon 4' },
+    'mediumaquamarine'     => { list => 'X11', rgb => [0x66, 0xcd, 0xaa], name => 'Medium Aquamarine' },
+    'mediumblue'           => { list => 'X11', rgb => [0x00, 0x00, 0xcd], name => 'Medium Blue' },
+    'mediumorchid'         => { list => 'X11', rgb => [0xba, 0x55, 0xd3], name => 'Medium Orchid' },
+    'mediumpurple'         => { list => 'X11', rgb => [0x93, 0x70, 0xdb], name => 'Medium Purple' },
+    'mediumseagreen'       => { list => 'X11', rgb => [0x3c, 0xb3, 0x71], name => 'Medium Sea Green' },
+    'mediumslateblue'      => { list => 'X11', rgb => [0x7b, 0x68, 0xee], name => 'Medium Slate Blue' },
+    'mediumspringgreen'    => { list => 'X11', rgb => [0x00, 0xfa, 0x9a], name => 'Medium Spring Green' },
+    'mediumturquoise'      => { list => 'X11', rgb => [0x48, 0xd1, 0xcc], name => 'Medium Turquoise' },
+    'mediumvioletred'      => { list => 'X11', rgb => [0xc7, 0x15, 0x85], name => 'Medium Violet Red' },
+    'midnightblue'         => { list => 'X11', rgb => [0x19, 0x19, 0x70], name => 'Midnight Blue' },
+    'mintcream'            => { list => 'X11', rgb => [0xf5, 0xff, 0xfa], name => 'Mint Cream' },
+    'mistyrose'            => { list => 'X11', rgb => [0xff, 0xe4, 0xe1], name => 'Misty Rose' },
+    'moccasin'             => { list => 'X11', rgb => [0xff, 0xe4, 0xb5], name => 'Moccasin' },
+    'navajowhite'          => { list => 'X11', rgb => [0xff, 0xde, 0xad], name => 'Navajo White' },
+    'navy'                 => { list => 'X11', rgb => [0x00, 0x00, 0x80], name => 'Navy' },
+    'navyblue'             => { list => 'X11', rgb => [0x00, 0x00, 0x80], name => 'Navy Blue' },
+    'oldlace'              => { list => 'X11', rgb => [0xfd, 0xf5, 0xe6], name => 'Old Lace' },
+    'olivedrab'            => { list => 'X11', rgb => [0x6b, 0x8e, 0x23], name => 'Olive Drab' },
+    'orange'               => { list => 'X11', rgb => [0xff, 0xa5, 0x00], name => 'Orange' },
+    'orange1'              => { list => 'X11', rgb => [0xff, 0xa5, 0x00], name => 'Orange 1' },
+    'orange2'              => { list => 'X11', rgb => [0xee, 0x9a, 0x00], name => 'Orange 2' },
+    'orange3'              => { list => 'X11', rgb => [0xcd, 0x85, 0x00], name => 'Orange 3' },
+    'orange4'              => { list => 'X11', rgb => [0x8b, 0x5a, 0x00], name => 'Orange 4' },
+    'orangered'            => { list => 'X11', rgb => [0xff, 0x45, 0x00], name => 'Orange Red' },
+    'orchid'               => { list => 'X11', rgb => [0xda, 0x70, 0xd6], name => 'Orchid' },
+    'orchid1'              => { list => 'X11', rgb => [0xff, 0x83, 0xfa], name => 'Orchid 1' },
+    'orchid2'              => { list => 'X11', rgb => [0xee, 0x7a, 0xe9], name => 'Orchid 2' },
+    'orchid3'              => { list => 'X11', rgb => [0xcd, 0x69, 0xc9], name => 'Orchid 3' },
+    'orchid4'              => { list => 'X11', rgb => [0x8b, 0x47, 0x89], name => 'Orchid 4' },
+    'palegoldenrod'        => { list => 'X11', rgb => [0xee, 0xe8, 0xaa], name => 'Pale Goldenrod' },
+    'palegreen'            => { list => 'X11', rgb => [0x98, 0xfb, 0x98], name => 'Pale Green' },
+    'paleturquoise'        => { list => 'X11', rgb => [0xaf, 0xee, 0xee], name => 'Pale Turquoise' },
+    'palevioletred'        => { list => 'X11', rgb => [0xdb, 0x70, 0x93], name => 'Pale Violet Red' },
+    'papayawhip'           => { list => 'X11', rgb => [0xff, 0xef, 0xd5], name => 'Papaya Whip' },
+    'peachpuff'            => { list => 'X11', rgb => [0xff, 0xda, 0xb9], name => 'Peach Puff' },
+    'peru'                 => { list => 'X11', rgb => [0xcd, 0x85, 0x3f], name => 'Peru' },
+    'pink'                 => { list => 'X11', rgb => [0xff, 0xc0, 0xcb], name => 'Pink' },
+    'pink1'                => { list => 'X11', rgb => [0xff, 0xb5, 0xc5], name => 'Pink 1' },
+    'pink2'                => { list => 'X11', rgb => [0xee, 0xa9, 0xb8], name => 'Pink 2' },
+    'pink3'                => { list => 'X11', rgb => [0xcd, 0x91, 0x9e], name => 'Pink 3' },
+    'pink4'                => { list => 'X11', rgb => [0x8b, 0x63, 0x6c], name => 'Pink 4' },
+    'plum'                 => { list => 'X11', rgb => [0xdd, 0xa0, 0xdd], name => 'Plum' },
+    'plum1'                => { list => 'X11', rgb => [0xff, 0xbb, 0xff], name => 'Plum 1' },
+    'plum2'                => { list => 'X11', rgb => [0xee, 0xae, 0xee], name => 'Plum 2' },
+    'plum3'                => { list => 'X11', rgb => [0xcd, 0x96, 0xcd], name => 'Plum 3' },
+    'plum4'                => { list => 'X11', rgb => [0x8b, 0x66, 0x8b], name => 'Plum 4' },
+    'powderblue'           => { list => 'X11', rgb => [0xb0, 0xe0, 0xe6], name => 'Powder Blue' },
+    'purple'               => { list => 'X11', rgb => [0xa0, 0x20, 0xf0], name => 'Purple' },
+    'purple1'              => { list => 'X11', rgb => [0x9b, 0x30, 0xff], name => 'Purple 1' },
+    'purple2'              => { list => 'X11', rgb => [0x91, 0x2c, 0xee], name => 'Purple 2' },
+    'purple3'              => { list => 'X11', rgb => [0x7d, 0x26, 0xcd], name => 'Purple 3' },
+    'purple4'              => { list => 'X11', rgb => [0x55, 0x1a, 0x8b], name => 'Purple 4' },
+    'red'                  => { list => 'X11', rgb => [0xff, 0x00, 0x00], name => 'Red' },
+    'red1'                 => { list => 'X11', rgb => [0xff, 0x00, 0x00], name => 'Red 1' },
+    'red2'                 => { list => 'X11', rgb => [0xee, 0x00, 0x00], name => 'Red 2' },
+    'red3'                 => { list => 'X11', rgb => [0xcd, 0x00, 0x00], name => 'Red 3' },
+    'red4'                 => { list => 'X11', rgb => [0x8b, 0x00, 0x00], name => 'Red 4' },
+    'rosybrown'            => { list => 'X11', rgb => [0xbc, 0x8f, 0x8f], name => 'Rosy Brown' },
+    'royalblue'            => { list => 'X11', rgb => [0x41, 0x69, 0xe1], name => 'Royal Blue' },
+    'saddlebrown'          => { list => 'X11', rgb => [0x8b, 0x45, 0x13], name => 'Saddle Brown' },
+    'salmon'               => { list => 'X11', rgb => [0xfa, 0x80, 0x72], name => 'Salmon' },
+    'salmon1'              => { list => 'X11', rgb => [0xff, 0x8c, 0x69], name => 'Salmon 1' },
+    'salmon2'              => { list => 'X11', rgb => [0xee, 0x82, 0x62], name => 'Salmon 2' },
+    'salmon3'              => { list => 'X11', rgb => [0xcd, 0x70, 0x54], name => 'Salmon 3' },
+    'salmon4'              => { list => 'X11', rgb => [0x8b, 0x4c, 0x39], name => 'Salmon 4' },
+    'sandybrown'           => { list => 'X11', rgb => [0xf4, 0xa4, 0x60], name => 'Sandy Brown' },
+    'seagreen'             => { list => 'X11', rgb => [0x2e, 0x8b, 0x57], name => 'Sea Green' },
+    'seashell'             => { list => 'X11', rgb => [0xff, 0xf5, 0xee], name => 'Seashell' },
+    'seashell1'            => { list => 'X11', rgb => [0xff, 0xf5, 0xee], name => 'Seashell 1' },
+    'seashell2'            => { list => 'X11', rgb => [0xee, 0xe5, 0xde], name => 'Seashell 2' },
+    'seashell3'            => { list => 'X11', rgb => [0xcd, 0xc5, 0xbf], name => 'Seashell 3' },
+    'seashell4'            => { list => 'X11', rgb => [0x8b, 0x86, 0x82], name => 'Seashell 4' },
+    'sienna'               => { list => 'X11', rgb => [0xa0, 0x52, 0x2d], name => 'Sienna' },
+    'sienna1'              => { list => 'X11', rgb => [0xff, 0x82, 0x47], name => 'Sienna 1' },
+    'sienna2'              => { list => 'X11', rgb => [0xee, 0x79, 0x42], name => 'Sienna 2' },
+    'sienna3'              => { list => 'X11', rgb => [0xcd, 0x68, 0x39], name => 'Sienna 3' },
+    'sienna4'              => { list => 'X11', rgb => [0x8b, 0x47, 0x26], name => 'Sienna 4' },
+    'skyblue'              => { list => 'X11', rgb => [0x87, 0xce, 0xeb], name => 'Sky Blue' },
+    'slateblue'            => { list => 'X11', rgb => [0x6a, 0x5a, 0xcd], name => 'Slate Blue' },
+    'slategray'            => { list => 'X11', rgb => [0x70, 0x80, 0x90], name => 'Slate Gray' },
+    'slategrey'            => { list => 'X11', rgb => [0x70, 0x80, 0x90], name => 'Slate Grey' },
+    'snow'                 => { list => 'X11', rgb => [0xff, 0xfa, 0xfa], name => 'Snow' },
+    'snow1'                => { list => 'X11', rgb => [0xff, 0xfa, 0xfa], name => 'Snow 1' },
+    'snow2'                => { list => 'X11', rgb => [0xee, 0xe9, 0xe9], name => 'Snow 2' },
+    'snow3'                => { list => 'X11', rgb => [0xcd, 0xc9, 0xc9], name => 'Snow 3' },
+    'snow4'                => { list => 'X11', rgb => [0x8b, 0x89, 0x89], name => 'Snow 4' },
+    'springgreen'          => { list => 'X11', rgb => [0x00, 0xff, 0x7f], name => 'Spring Green' },
+    'steelblue'            => { list => 'X11', rgb => [0x46, 0x82, 0xb4], name => 'Steel Blue' },
+    'tan'                  => { list => 'X11', rgb => [0xd2, 0xb4, 0x8c], name => 'Tan' },
+    'tan1'                 => { list => 'X11', rgb => [0xff, 0xa5, 0x4f], name => 'Tan 1' },
+    'tan2'                 => { list => 'X11', rgb => [0xee, 0x9a, 0x49], name => 'Tan 2' },
+    'tan3'                 => { list => 'X11', rgb => [0xcd, 0x85, 0x3f], name => 'Tan 3' },
+    'tan4'                 => { list => 'X11', rgb => [0x8b, 0x5a, 0x2b], name => 'Tan 4' },
+    'thistle'              => { list => 'X11', rgb => [0xd8, 0xbf, 0xd8], name => 'Thistle' },
+    'thistle1'             => { list => 'X11', rgb => [0xff, 0xe1, 0xff], name => 'Thistle 1' },
+    'thistle2'             => { list => 'X11', rgb => [0xee, 0xd2, 0xee], name => 'Thistle 2' },
+    'thistle3'             => { list => 'X11', rgb => [0xcd, 0xb5, 0xcd], name => 'Thistle 3' },
+    'thistle4'             => { list => 'X11', rgb => [0x8b, 0x7b, 0x8b], name => 'Thistle 4' },
+    'tomato'               => { list => 'X11', rgb => [0xff, 0x63, 0x47], name => 'Tomato' },
+    'tomato1'              => { list => 'X11', rgb => [0xff, 0x63, 0x47], name => 'Tomato 1' },
+    'tomato2'              => { list => 'X11', rgb => [0xee, 0x5c, 0x42], name => 'Tomato 2' },
+    'tomato3'              => { list => 'X11', rgb => [0xcd, 0x4f, 0x39], name => 'Tomato 3' },
+    'tomato4'              => { list => 'X11', rgb => [0x8b, 0x36, 0x26], name => 'Tomato 4' },
+    'turquoise'            => { list => 'X11', rgb => [0x40, 0xe0, 0xd0], name => 'Turquoise' },
+    'turquoise1'           => { list => 'X11', rgb => [0x00, 0xf5, 0xff], name => 'Turquoise 1' },
+    'turquoise2'           => { list => 'X11', rgb => [0x00, 0xe5, 0xee], name => 'Turquoise 2' },
+    'turquoise3'           => { list => 'X11', rgb => [0x00, 0xc5, 0xcd], name => 'Turquoise 3' },
+    'turquoise4'           => { list => 'X11', rgb => [0x00, 0x86, 0x8b], name => 'Turquoise 4' },
+    'violet'               => { list => 'X11', rgb => [0xee, 0x82, 0xee], name => 'Violet' },
+    'violetred'            => { list => 'X11', rgb => [0xd0, 0x20, 0x90], name => 'Violet Red' },
+    'wheat'                => { list => 'X11', rgb => [0xf5, 0xde, 0xb3], name => 'Wheat' },
+    'wheat1'               => { list => 'X11', rgb => [0xff, 0xe7, 0xba], name => 'Wheat 1' },
+    'wheat2'               => { list => 'X11', rgb => [0xee, 0xd8, 0xae], name => 'Wheat 2' },
+    'wheat3'               => { list => 'X11', rgb => [0xcd, 0xba, 0x96], name => 'Wheat 3' },
+    'wheat4'               => { list => 'X11', rgb => [0x8b, 0x7e, 0x66], name => 'Wheat 4' },
+    'white'                => { list => 'X11', rgb => [0xff, 0xff, 0xff], name => 'White' },
+    'whitesmoke'           => { list => 'X11', rgb => [0xf5, 0xf5, 0xf5], name => 'White Smoke' },
+    'yellow'               => { list => 'X11', rgb => [0xff, 0xff, 0x00], name => 'Yellow' },
+    'yellow1'              => { list => 'X11', rgb => [0xff, 0xff, 0x00], name => 'Yellow 1' },
+    'yellow2'              => { list => 'X11', rgb => [0xee, 0xee, 0x00], name => 'Yellow 2' },
+    'yellow3'              => { list => 'X11', rgb => [0xcd, 0xcd, 0x00], name => 'Yellow 3' },
+    'yellow4'              => { list => 'X11', rgb => [0x8b, 0x8b, 0x00], name => 'Yellow 4' },
+    'yellowgreen'          => { list => 'X11', rgb => [0x9a, 0xcd, 0x32], name => 'Yellow Green' },
+    Color::Names.color-data('XKCD');
 
 my $version = v0.6;
+
+my $limit = 20; # color distance threshold limit
 
 # Control-C exit
 signal(SIGINT).tap: { sleep .1; cleanup(); print "\n" xx 50, "\e[H\e[J"; exit(0) }
@@ -12,8 +405,11 @@ signal(SIGINT).tap: { sleep .1; cleanup(); print "\n" xx 50, "\e[H\e[J"; exit(0)
 # Control-Z exit
 signal(SIGTSTP).tap: { sleep .1; print "\r  \n"; cleanup(); exit(0) }
 
-multi MAIN () {
+my %*SUB-MAIN-OPTS = :named-anywhere;
+
+multi MAIN (:$distance = 20) {
     use X11::libxdo;
+    $limit = $distance max 1;
     my $xdo = Xdo.new;
     my ($lx, $ly) = 0, 0;
     loop {
@@ -25,15 +421,15 @@ multi MAIN () {
     }
 }
 
-my %*SUB-MAIN-OPTS = :named-anywhere;
 
 multi MAIN (
-    Int $x,    #= Integer x coordinate to pick
-    Int $y,    #= Integer y coordinate to pick
-    $q = False #= Boolean "quiet" mode, set truthy for decimal values, set to h for hex values
+    Int $x,          #= Integer x coordinate to pick
+    Int $y,          #= Integer y coordinate to pick
+    $q = False,      #= Boolean "quiet" mode, set truthy for decimal values, set to h for hex values
+    :$distance = 20 #= Nearest color threshold
   ) {
     my ($red, $green, $blue) = get-pixel($x, $y);
-
+    $limit = $distance max 1;
     if $q {
         $q.lc eq 'h' ??
           ( printf "%02X:%02X:%02X\n", $red, $green, $blue ) !!
@@ -59,34 +455,43 @@ sub get-pixel ($x, $y) {
 
 sub display ($x, $y, $r, $g, $b) {
     my $indent = '    ';
-    print "\e[?25l\e[48;2;0;0;0m\e[38;2;255;255;255m\e[H\e[J";
-    printf "{$indent}v$version | x: %4d y: $y\n", $x;
-    printf "{$indent}  RGB: %03d:%03d:%03d \n{$indent}    HEX: %02X:%02X:%02X\n",
+    try print "\e[?25l\e[48;2;0;0;0m\e[38;2;255;255;255m\e[H\e[J";
+    try printf "{$indent}v$version | x: %4d y: $y\n", $x;
+    try printf "{$indent}  RGB: %03d:%03d:%03d \n{$indent}    HEX: %02X:%02X:%02X\n",
             $r, $g, $b, $r, $g, $b;
-    print "\e[38;2;{$r};{$g};{$b}m{$indent}",
+    try print "\e[38;2;{$r};{$g};{$b}m{$indent}",
            ('█' x 20 xx 6).join("\n{$indent}"), "\n\n\e[38;2;255;255;255m";
 
-    say 'Nearby (XKCD) named colors:';
+    try say 'Nearby (XKCD / X11) named colors:';
 
     # Uses "sensitivity" scaling values from wikipedia:Color_difference to search
-    # for "nearby" colors. Adjust $threshold to expand or reduce search space.
-    # 60 seems like a reasonble tradeoff between "too-much" and "not-enough".
+    # for "nearby" colors. Adjust $distance ($limit) to expand or reduce search
+    # space. # 25 seems like a reasonble tradeoff between "too-much" and
+    # "not-enough". # Allows passing  a threshold parameter as a command line
+    # option to adjust the definition of "near".
 
-    my $threshold = 60;
+    my @c;
+    my $threshold = $limit;
 
-    my @c =  %c.grep: {
-        3 * abs($r - .value<rgb>[0]) < $threshold and
-        4 * abs($g - .value<rgb>[1]) < $threshold and
-        2 * abs($b - .value<rgb>[2]) < $threshold
-    }
-    for @c -> $c {
+    repeat {
+        @c = %c.grep: {
+            3 * abs($r - .value<rgb>[0]) < $threshold and
+            4 * abs($g - .value<rgb>[1]) < $threshold and
+            2 * abs($b - .value<rgb>[2]) < $threshold
+        }
+        $threshold += 2;
+    } until @c.elems;
+    for @c.sort -> $c {
         my $fg = (sqrt(sum $c.value<rgb>[0]², $c.value<rgb>[1]², $c.value<rgb>[2]²) > 140)
         ?? [0,0,0] !! [255,255,255];
-        say "\e[48;2;{$c.value<rgb>[0]};{$c.value<rgb>[1]};{$c.value<rgb>[2]}m" ~
+        try say "\e[48;2;{$c.value<rgb>[0]};{$c.value<rgb>[1]};{$c.value<rgb>[2]}m" ~
             "\e[38;2;{$fg[0]};{$fg[1]};{$fg[2]}m" ~
-            sprintf("   RGB: %03d:%03d:%03d - HEX: %02X:%02X:%02X - %-26s",
-                    |$c.value<rgb>, |$c.value<rgb>, $c.value<name>) ~ "\e[0m";
+            sprintf(" %6s RGB: %03d:%03d:%03d - HEX: %02X:%02X:%02X - %-26s",
+                ($c.value<list>:exists ?? '(X11)' !! '(XKCD)'),
+                |$c.value<rgb>, |$c.value<rgb>, $c.value<name>
+            );
     }
+    say '';
 }
 
 sub cleanup { print "\e[0m\e[?25h" }
