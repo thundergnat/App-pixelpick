@@ -1,6 +1,10 @@
 #!/usr/bin/env perl6
 
-my $version = v0.5;
+use Color::Names::XKCD;
+
+my %c = Color::Names::XKCD.color-data;
+
+my $version = v0.6;
 
 # Control-C exit
 signal(SIGINT).tap: { sleep .1; cleanup(); print "\n" xx 50, "\e[H\e[J"; exit(0) }
@@ -57,10 +61,32 @@ sub display ($x, $y, $r, $g, $b) {
     my $indent = '    ';
     print "\e[?25l\e[48;2;0;0;0m\e[38;2;255;255;255m\e[H\e[J";
     printf "{$indent}v$version | x: %4d y: $y\n", $x;
-    printf "{$indent}  RGB: %03d:%03d:%03d \n{$indent}  HEX: %02X:%02X:%02X\n",
+    printf "{$indent}  RGB: %03d:%03d:%03d \n{$indent}    HEX: %02X:%02X:%02X\n",
             $r, $g, $b, $r, $g, $b;
     print "\e[38;2;{$r};{$g};{$b}m{$indent}",
-           ('█' x 18 xx 6).join("\n{$indent}"), "\n\n";
+           ('█' x 20 xx 6).join("\n{$indent}"), "\n\n\e[38;2;255;255;255m";
+
+    say 'Nearby (XKCD) named colors:';
+
+    # Uses "sensitivity" scaling values from wikipedia:Color_difference to search
+    # for "nearby" colors. Adjust $threshold to expand or reduce search space.
+    # 60 seems like a reasonble tradeoff between "too-much" and "not-enough".
+
+    my $threshold = 60;
+
+    my @c =  %c.grep: {
+        3 * abs($r - .value<rgb>[0]) < $threshold and
+        4 * abs($g - .value<rgb>[1]) < $threshold and
+        2 * abs($b - .value<rgb>[2]) < $threshold
+    }
+    for @c -> $c {
+        my $fg = (sqrt(sum $c.value<rgb>[0]², $c.value<rgb>[1]², $c.value<rgb>[2]²) > 140)
+        ?? [0,0,0] !! [255,255,255];
+        say "\e[48;2;{$c.value<rgb>[0]};{$c.value<rgb>[1]};{$c.value<rgb>[2]}m" ~
+            "\e[38;2;{$fg[0]};{$fg[1]};{$fg[2]}m" ~
+            sprintf("   RGB: %03d:%03d:%03d - HEX: %02X:%02X:%02X - %-26s",
+                    |$c.value<rgb>, |$c.value<rgb>, $c.value<name>) ~ "\e[0m";
+    }
 }
 
 sub cleanup { print "\e[0m\e[?25h" }
