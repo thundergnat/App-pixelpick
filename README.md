@@ -1,5 +1,5 @@
-NAME pixel-pick
-===============
+NAME pixelpick
+==============
 
 Get the color of any screen pixel in an X11 environment.
 
@@ -7,7 +7,7 @@ Simple command-line app to allow you to get the RGB color of ___any___ screen pi
 
 ### Install
 
-    zef install App::pixel-pick
+    zef install App::pixelpick
 
 Needs to have the `import` utility available. Installed part of the `MagickWand` package. Most Linuxes have it already, if not, install ` libmagickwand`. May want to install `libmagickwand-dev` as well, though it isn't strictly necessary for this app.
 
@@ -22,7 +22,7 @@ Use
 
 ### Interactive:
 
-    pixel-pick <--distance=Int> <--list=COLOR,LISTS>
+    pixelpick <--distance=Int> <--list=COLOR,LISTS>
 
 If invoked with no positional parameters, runs in interactive mode. Will get the color of the pixel under the mouse pointer and show the RGB values in both decimal and hexadecimal formats and will display a small block colored to that value. Will also display colored blocks of "Named colors", along with their RGB values, that are "near" the selected color.
 
@@ -38,7 +38,7 @@ If different color lists are desired, pass in a comma joined list of names. Any 
 
 as of this writing. The (case-sensitive) names must be in one contiuous string joined by commas. E.G.
 
-    pixel-pick --list=Crayola,XKCD
+    pixelpick --list=Crayola,XKCD
 
 Updates moderately slowly as the mouse is moved. There is some delay just to slow down the busy loop of checking to see if the mouse has moved. Will not attempt to update if the mouse has not moved. Uses the `X11::xdo` module to capture mouse motion so will only work in an X11 environment.
 
@@ -48,19 +48,19 @@ When in interactive mode, you need to send an abort signal to exit the utility. 
 
 ### Non-interactive: (Get the color of the pixel at 100, 200)
 
-    pixel-pick 100 200 (--distance=Int)
+    pixelpick 100 200 (--distance=Int)
 
 If invoked with X, Y coordinates, (--distance parameter optional) runs non-interactive. Gets the pixel color at that coordinate and exits immediately, doing the partial cleanup as you would get from Control-Z.
 
 ### Non-interactive, quiet: (Get the RGB values of the pixel at 100, 200)
 
-    pixel-pick 100 200 q
+    pixelpick 100 200 q
 
 Add a truthy value as a "quiet" parameter to not return the standard color parameters and block. Only returns the RGB values in base 10 separated by colons. EG. `RRR:GGG:BBB`
 
 If you would prefer to receive hex values, use an 'h' as the quiet parameter. Returns the RGB values in hexadecimal, separated by colons; `RR:GG:BB`.
 
-    pixel-pick 100 200 h
+    pixelpick 100 200 h
 
 Author
 ======

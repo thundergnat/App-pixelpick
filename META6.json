@@ -12,14 +12,14 @@
   ],
   "description": "Get the color of any screen pixel in an X11 environment",
   "license": "Artistic-2.0",
-  "name": "App::pixel::pick",
+  "name": "App::pixelpick",
   "perl": "6.*",
   "provides": {
-    "App::pixel::pick": "lib/App/pixel/pick.rakumod"
+    "App::pixelpick": "lib/App/pixelpick.rakumod"
   },
   "resources": [
   ],
-  "source-url": "https://github.com/thundergnat/App-pixel-pick.git",
+  "source-url": "https://github.com/thundergnat/App-pixelpick.git",
   "tags": [
     "RGB",
     "color",
@@ -30,5 +30,5 @@
   ],
   "test-depends": [
   ],
-  "version": "0.1.0"
+  "version": "1.1"
 }
