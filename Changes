@@ -1,0 +1,7 @@
+Revision history for App-pixel-pick
+
+{{$NEXT}}
+    - Migrate to fez ecosystem
+      Update to use Color::Names:api<2> which allows loading of multiple lists at the same time
+      Tweak layout of display significantly 
+      Add a USAGE sub
